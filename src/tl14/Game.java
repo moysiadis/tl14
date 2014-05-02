@@ -65,7 +65,8 @@ public class Game {
 		//
 		
 		
-		conn.Send(moveToSend);
+		int errorType=conn.Send(moveToSend);
+		return errorType;
 	}
 	
 	public int Connect(){

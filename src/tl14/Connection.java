@@ -8,7 +8,7 @@ public class Connection {
 	public String serverIp;
 	private Socket connectSock;
 	private BufferedReader in;
-	private PrintWriter out;
+	private DataOutputStream out;
 	
 	public Connection(){
 	}
@@ -19,7 +19,7 @@ public class Connection {
 		try {
 			serverAddr=InetAddress.getByName(serverIp);
 			connectSock = new Socket(serverAddr,serverPortNo);
-			out=new PrintWriter(connectSock.getOutputStream(), true);
+			out=new DataOutputStream(connectSock.getOutputStream());
 			in = new BufferedReader(new InputStreamReader(connectSock.getInputStream()));
 		} catch (IOException e) {
 			if(connectSock==null)
@@ -37,15 +37,19 @@ public class Connection {
 		serverIp=ip;
 	}
 	
-	public int Send(String out){
-		if (this.out != null && !this.out.checkError()) {
-            this.out.print(out);
-            this.out.flush();
+	public int Send(String sendMsg){
+		
+		if (out != null) {
+            try {
+				out.writeBytes(sendMsg);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				return 2;
+			}
             
-            return 1;
-            //i=receive();	            
+            return 1;           
            }
-		return 2;
+		return 3;
 	}
 	
 	public String Receive() throws IOException{
