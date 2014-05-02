@@ -56,7 +56,6 @@ public class Connection {
 			try {
 				serverMsg.concat(in.readLine());
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				
 				serverMsg="fail";
 				throw e;
