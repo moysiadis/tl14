@@ -59,6 +59,7 @@ public class Connection {
 		while(!done){
 			try {
 				serverMsg.concat(in.readLine());
+				done=true;
 			} catch (IOException e) {
 				
 				serverMsg="fail";
