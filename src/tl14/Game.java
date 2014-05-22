@@ -142,6 +142,9 @@ public class Game {
 		
 	}
 	
+	public void resetConn(){
+		conn.Send("errorreset");
+	}
 	
 	private void sendServerDetails(){
 		String temp;
