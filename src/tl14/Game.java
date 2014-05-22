@@ -14,12 +14,17 @@ public class Game {
 	private AnalyseGame anG;
 	private int d1,d2;
 	private int gameCounter;
+	private String name1,name2;//localplayer,awayPlayer
+	private MainFrame mf;
 	
-	public Game(int gameMode,int portNo, String ipNo){
+	public Game(int gameMode,int portNo, String ipNo,String name1,String name2,MainFrame mf){
 		//playerNo=pNo;
 		conn=new Connection();
 		gameCounter=0;
-		conn.setConnectionDetails(portNo, ipNo);
+		setConnection(portNo, ipNo);
+		this.name1=name1;
+		this.name2=name2;
+		this.mf=mf;
 		
 		for(int i=0;i<=25;i++)
 		{
@@ -90,6 +95,10 @@ public class Game {
 	}
 	
 	
+	public void setConnection(int port,String ip){
+		conn.setConnectionDetails(port, ip);
+	}
+	
 	public int[] setMoves(ArrayList<String> moves){
 		//στο MainFrame μετά την ολοκλήρωση των κινήσεων αποθηκέυονται σε ένα ArrayList
 		//και στέλνονται στο setMove, πριν σταλθεί ελέγχουμε με AnalyseMove ώστε να ενημερωθούν
@@ -133,7 +142,17 @@ public class Game {
 		
 	}
 	
-	private int[] receiveMsg(int  erNo){
+	
+	private void sendServerDetails(){
+		String temp;
+		temp=name1;
+		if(!name2.equals(""))
+			temp.concat(name2);
+		
+		conn.Send(temp);		
+	}
+	
+	public int[] receiveMsg(int  erNo){
 		int[] errorType={0,0,0};
 		String serverMsg="";
 		String[] msgAnalysed=null;
@@ -151,32 +170,6 @@ public class Game {
 		else if(erNo==3)
 			System.out.println("null in send");
 		
-	/*	if(erNo==1 && errorType[0]!=5){
-			if (!serverMsg.isEmpty() && !serverMsg.equals("fail") && serverMsg.startsWith("move")) {
-				awayPos=new ArrayList<Integer>(anG.analyseMove(false,serverMsg));
-				if(anG.NeedLocalChange()){
-					localPos= new ArrayList<Integer> (anG.getLocal());
-				}
-				errorType[0]=1;
-			}else{
-				errorType[0]=4;
-			}
-		}else if(erNo==0 && errorType[0]!=5){
-			//απόκριση από τον σερβερ είτε για ζάρια ή σειρά παίκτη
-			msgAnalysed.concat(anG.analyseMsg(serverMsg));
-			
-			if(msgAnalysed.startsWith("dice")){
-				String[] parts=msgAnalysed.split(",");//το μνμ θα είναι <dice,<1-6>,<1-6>>
-				errorType[1]=d1=Integer.valueOf(parts[1]);
-				errorType[2]=d2=Integer.valueOf(parts[2]);
-				errorType[0]=2;
-				
-			}else if(msgAnalysed.startsWith("playerNo")){
-				String[] parts=msgAnalysed.split(",");
-				errorType[0]=3;
-				errorType[1]=playerNo=Integer.valueOf(parts[1]);
-			}
-		}*/
 		
 		if(errorType[0]!=5){
 			msgAnalysed=anG.analyseMsg(serverMsg);
@@ -206,6 +199,9 @@ public class Game {
 					if(errorType[0]==1){
 						playerNo=false;//αν errorType[0]=1 τότε ο παίκτης παίζει δεύτερος 
 					}
+				}else if(msgAnalysed[0].equals("sendname")){
+					sendServerDetails();
+					errorType[0]=0;
 				}
 			}
 			
@@ -214,6 +210,6 @@ public class Game {
 		}
 			
 		gameCounter++;
-		return errorType;//errorType=1-3 δεν είναι errors, 4-5 έχουν γίνει κάποια errors
+		return errorType;//errorType=0-3 δεν είναι errors, 4-5 έχουν γίνει κάποια errors
 	}
 }
