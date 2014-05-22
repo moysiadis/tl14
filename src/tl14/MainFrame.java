@@ -29,7 +29,9 @@ public class MainFrame extends JFrame{
 	private void startGame(){
 		//Το popUp επιστρέφει  portNo, ip,το όνομα του παίκτη, και το όνομα του αντιπάλου αν υπάρχει
 			String[] temp=callPopUp(0);
-
+			int[] noTemp=null;
+			boolean flag=true;
+			
 			gm=new Game(1,Integer.valueOf(temp[0]),temp[1],temp[2],temp[3],this);
 			while(gm.Connect()!=1){
 				temp= callPopUp(1);
@@ -38,7 +40,24 @@ public class MainFrame extends JFrame{
 				}
 			}
 			
+			
+			do {
+				noTemp = gm.receiveMsg(0);
+				if (noTemp[0] != 0) {
+					gm.receiveMsg(0);
+				} else {
+					System.out.println("problem");
+					gm.resetConn();
+					flag=false;
+				}
+			} while (flag);
+			
+			///////////////////////normal flow
 			gm.receiveMsg(0);
+			
+			
+			
+			///////////////////////
 			
 			
 		
