@@ -19,14 +19,17 @@ public class MainFrame extends JFrame{
 	JLabel label2;
 	JLabel label3;
 	PopUpWindow puw;
+	JPanel panel2;
+	JPanel panel1;
+	
 	
 	public MainFrame(){
 		
+		/* graphics code
 		panel=new JPanel();
-		// graphics code
 		frame = new JFrame("Backgammon");
-		JPanel panel1 = new JPanel();
-		JPanel panel2 = new JPanel();
+		panel1 = new JPanel();
+		panel2 = new JPanel();
 		Container mainPane = frame.getContentPane();
         button1 = new JButton("Start Game");
         button2 = new JButton("Roll");        
@@ -56,7 +59,7 @@ public class MainFrame extends JFrame{
         label3.setVisible(true);
         frame.pack();
         frame.setVisible(true);
-		/////////////////////////////////
+		*////////////////////////////////
 		puw=new PopUpWindow();
 		
 		
@@ -172,6 +175,7 @@ public class MainFrame extends JFrame{
 		pMoves=new ArrayList<ArrayList<Integer>>(gm.PossibleMoves());
 		
 		
+		
 		return move;
  	}
 	
@@ -187,6 +191,9 @@ public class MainFrame extends JFrame{
 		
 		
 	}
+	
+	
+	
 	
 	
 }
