@@ -90,8 +90,12 @@ public class Game {
 		return temp;
 	}
 	
-	public ArrayList<Integer> getNewPositions(){//την καλεί το Frame για να σχεδιάσει την κίνηση του αντιπάλου
+	public ArrayList<Integer> getAwayPositions(){//την καλεί το Frame για να σχεδιάσει την κίνηση του αντιπάλου
 		return awayPos;
+	}
+	
+	public ArrayList<Integer> getLocalPositions(){//την καλεί το Frame για να σχεδιάσει την κίνηση του αντιπάλου
+		return localPos;
 	}
 	
 	
@@ -115,14 +119,34 @@ public class Game {
 		if(anG.NeedAwayChange()){
 			awayPos=new ArrayList<Integer>(anG.getAway());
 		}
-		erNo=conn.Send(moveToSend);
 		
 		//erNo=1 στάλθηκε επιτυχώς
 		//erNo=2 exception
 		//erNo=3 sendMsg=null
+		erNo=conn.Send(moveToSend);
+		gameCounter++;
+		
+		if(isWinner()==1){
+			int[] temp={7,1};
+			return temp;
+		}else if(isWinner()==2){
+			int[] temp={7,2};
+			return temp;
+		}
 		
 		return receiveMsg(erNo);
 	}
+	
+	public int isWinner(){
+		if(localPos.get(25)==15)
+			return 1;
+		if(awayPos.get(25)==15)
+			return 2;
+		
+		return 0;
+	}
+	
+	
 	
 	public int getGameCounter(){
 		return gameCounter;
@@ -193,7 +217,7 @@ public class Game {
 					errorType[2]=d2=Integer.valueOf(msgAnalysed[2]);
 					errorType[0]=2;
 					
-				}else if(msgAnalysed[0].equals("playerNo")){
+				}else if(msgAnalysed[0].equals("playerno")){
 					errorType[0]=3;
 					errorType[1]=Integer.valueOf(msgAnalysed[1]);
 					if(errorType[0]==1){
@@ -202,6 +226,8 @@ public class Game {
 				}else if(msgAnalysed[0].equals("sendname")){
 					sendServerDetails();
 					errorType[0]=0;
+				}else if(msgAnalysed[0].equals("searchwait")){
+					errorType[0]=6;
 				}
 			}
 			
@@ -209,7 +235,11 @@ public class Game {
 			System.out.println("Problem in receive");
 		}
 			
-		gameCounter++;
-		return errorType;//errorType=0-3 δεν είναι errors, 4-5 έχουν γίνει κάποια errors
+		
+		return errorType;//errorType=0-3+6 δεν είναι errors, 4,5 έχουν γίνει κάποια errors
+	}
+	
+	public void resetGame(){
+		InitializeGame(1);
 	}
 }
