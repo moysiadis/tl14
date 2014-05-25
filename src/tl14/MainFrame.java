@@ -12,15 +12,52 @@ public class MainFrame extends JFrame{
 	private ArrayList<Integer> localPos;
 	private ArrayList<Integer> awayPos;
 	boolean playAgain=false;
+	private JFrame frame;
+	JButton button1;
+	JButton button2; 
+	JLabel label1;
+	JLabel label2;
+	JLabel label3;
+	PopUpWindow puw;
 	
 	public MainFrame(){
-		panel=new JPanel();
-		//set graphics code
-		//
-		//
-		//
-		//
 		
+		panel=new JPanel();
+		// graphics code
+		frame = new JFrame("Backgammon");
+		JPanel panel1 = new JPanel();
+		JPanel panel2 = new JPanel();
+		Container mainPane = frame.getContentPane();
+        button1 = new JButton("Start Game");
+        button2 = new JButton("Roll");        
+        String path = "boardBG.png";
+        ImageIcon image1= new  ImageIcon(path);
+        
+        label1 = new JLabel(image1);
+        label2 = new JLabel("");
+        label3 = new JLabel("");
+        panel1.add(label3);
+        panel1.add(label2);
+        panel1.add(button2);
+        panel1.add(button1);
+        mainPane.setLayout(new BorderLayout());
+        panel2.add(label1);
+        panel1.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        panel1.setLayout(new GridLayout());
+        mainPane.add(panel1, BorderLayout.NORTH);
+        mainPane.add(panel2, BorderLayout.CENTER);
+        mainPane.setVisible(true);
+        panel1.setVisible(true);
+        panel2.setVisible(true);
+        button1.setVisible(true);
+        button2.setVisible(true);
+        label1.setVisible(true);
+        label2.setVisible(true);
+        label3.setVisible(true);
+        frame.pack();
+        frame.setVisible(true);
+		/////////////////////////////////
+		puw=new PopUpWindow();
 		
 		
 		startGame();
@@ -114,13 +151,17 @@ public class MainFrame extends JFrame{
 		//3: ερώτηση για επανάληψη παιχνιδιού, σε θετική απάντηση να αλλάξει σε true η playAgain
 		String[] temp=null;
 		
-		
-		
-		
-		
-		
-		
-		
+		if(mode==0){
+			temp=puw.gameStart();
+		}else if(mode==1){
+			puw.connError();
+		}else if(mode==2){
+			puw.winScreen();
+		}else if(mode==3){
+			temp=puw.isRepeat();
+			if(temp[0].equals("true"))
+				playAgain=true;
+		}
 		
 		return temp;
 	}
