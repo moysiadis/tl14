@@ -63,7 +63,7 @@ public class MainFrame extends JFrame{
 		puw=new PopUpWindow();
 		
 		
-		startGame();
+		//startGame();
 		
 		
 		

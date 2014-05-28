@@ -43,7 +43,7 @@ public class AnalyseGame {//rules,legal moves,game writer
 	public ArrayList<Integer> analyseMove(boolean pNo,String moveReceived){
 		//pNo=false είναι κίνηση αντιπάλου, αλλιώς κίνηση local
 		//move,<posNoFrom>-<posNoTo>,
-		String[] move;
+		ArrayList<String> move=new ArrayList<String>();
 		ArrayList<Integer> temp=new ArrayList<Integer>();
 		
 		if(pNo)
@@ -52,12 +52,12 @@ public class AnalyseGame {//rules,legal moves,game writer
 			temp=awayPos;
 		
 		move=cutString(moveReceived,",");		
-		for(int i=0;i<=move.length;i++){
-			int value1= Integer.valueOf(String.valueOf(move[i].charAt(0)));
-			int value2 = Integer.valueOf(String.valueOf(move[i].charAt(2)));
+		for(int i=0;i<move.size();i++){
+			int value1= Integer.valueOf(String.valueOf(move.get(i).charAt(0)));
+			int value2 = Integer.valueOf(String.valueOf(move.get(i).charAt(2)));
 			
-			if(move[i].charAt(0)=='o')//έλεγχος αν καίγεται πούλι
-				moveHit(pNo,move[i].substring(2));
+			if(move.get(i).charAt(0)=='o')//έλεγχος αν καίγεται πούλι
+				moveHit(pNo,move.get(i).substring(2));
 			
 			if (!pNo) {//μετάφραση του αντίπαλου local σε τοπικό away				
 				value1 = 25 - value1;
@@ -97,13 +97,13 @@ public class AnalyseGame {//rules,legal moves,game writer
 	public String setMoveForm(ArrayList<String> move){
 		String toSend="move,";
 		String hits="o-";
-		String[] temp=null;
+		ArrayList<String> temp=new ArrayList<String>();
 		
 		for(int i=0;i<=move.size();i++){
-			temp=null;
+			temp.clear();
 			temp=cutString(move.get(i),"-");
-			toSend.concat(temp[0]+"-"+temp[1]+",");
-			int posValue=Integer.valueOf(temp[0])+Integer.valueOf(temp[1]);
+			toSend.concat(temp.get(0)+"-"+temp.get(1)+",");
+			int posValue=Integer.valueOf(temp.get(0))+Integer.valueOf(temp.get(1));
 			
 			if(awayPos.get(posValue)==1){
 				/*το μέρος αυτό διαγράφεται επειδή η ανάλογη διευθέτηση γίνεται στο analyseMove
@@ -194,11 +194,12 @@ public class AnalyseGame {//rules,legal moves,game writer
 		}else return false;
 	}
 	
-	public String[] analyseMsg(String serverMsg){
-		String[] Msg = {"fail","fail","fail"};
-
+	public ArrayList<String> analyseMsg(String serverMsg){
+		
+		ArrayList<String> Msg =new ArrayList<String>();
+		
 		if(serverMsg.startsWith("move")){
-			Msg[0]="move";
+			Msg.add("move");
 		}else{
 			Msg=cutString(serverMsg,",");
 		}
@@ -206,14 +207,20 @@ public class AnalyseGame {//rules,legal moves,game writer
 		return Msg;
 	}
 	
-	private String[] cutString(String temp,String regEx){
-		strArrays = null;
-		String[] mArray;
-		mArray=temp.split(regEx);
-		if(mArray[0].equals("move")){
-			for(int i=0;mArray.length>i;i++)
-				strArrays[i]=mArray[i+1];
+	private ArrayList<String> cutString(String temp,String regEx){
+		
+		ArrayList<String> mArray =new ArrayList<String>();
+		
+		for(int i=0;i<temp.split(regEx).length;i++){
+			mArray.add(temp.split(regEx)[i]);
 		}
-		return strArrays;
+		
+		
+		System.out.print("mArray "+temp.split(regEx)[0]+mArray);
+		
+		if(mArray.get(0).equals("move")){
+			mArray.remove(0);
+		}
+		return mArray;
 	}
 }

@@ -8,7 +8,7 @@ public class Connection {
 	public String serverIp;
 	private Socket connectSock;
 	private BufferedReader in;
-	private BufferedWriter out;
+	private PrintWriter out;
 	
 	public Connection(){
 	}
@@ -19,7 +19,7 @@ public class Connection {
 		try {
 			serverAddr=InetAddress.getByName(serverIp);
 			connectSock = new Socket(serverAddr,serverPortNo);
-			out=new BufferedWriter(new OutputStreamWriter(connectSock.getOutputStream()));
+			out=new PrintWriter(connectSock.getOutputStream());
 			in = new BufferedReader(new InputStreamReader(connectSock.getInputStream()));
 		} catch (IOException e) {
 			if(connectSock==null)
@@ -32,20 +32,28 @@ public class Connection {
 		
 	}
 	
+	public void close(){
+		try {
+			in.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		out.close();
+	}
+	
 	public void setConnectionDetails(int port,String ip){
 		serverPortNo=port;
 		serverIp=ip;
 	}
 	
 	public int Send(String sendMsg){
-		
+		sendMsg.concat("\r\n");
 		if (out != null) {
-            try {
-				out.write(sendMsg);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				return 2;
-			}
+            //Thread.sleep(1000);
+			System.out.print("sending"+sendMsg);
+			out.println(sendMsg);
+			out.flush();
             
             return 1;           
            }
@@ -53,19 +61,25 @@ public class Connection {
 	}
 	
 	public String Receive() throws IOException{
-		String serverMsg="";
-		boolean done=false;
-		
-		while(!done){
+		String serverMsg=null;
 			try {
-				serverMsg.concat(in.readLine());
-				done=true;
-			} catch (IOException e) {
+				System.out.print("receiving...");
 				
+				if(this.connectSock.isClosed())
+					System.out.print("socket closed");
+				//notify wait
+				System.out.print("socket: "+ connectSock.getPort());
+				
+				
+				serverMsg=in.readLine();
+
+				System.out.println(serverMsg+"\n");
+				
+			} catch (IOException e) {
+				System.out.println("fail");
 				serverMsg="fail";
 				throw e;
 			}
-		}
 		return serverMsg;
 	}
 	

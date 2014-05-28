@@ -17,6 +17,8 @@ public class Game {
 	private String name1,name2;//localplayer,awayPlayer
 	private MainFrame mf;
 	
+	
+	//gameMode,portNo,ip(String),localname,awayname,mainFrame)
 	public Game(int gameMode,int portNo, String ipNo,String name1,String name2,MainFrame mf){
 		//playerNo=pNo;
 		conn=new Connection();
@@ -25,6 +27,8 @@ public class Game {
 		this.name1=name1;
 		this.name2=name2;
 		this.mf=mf;
+		localPos=new ArrayList<Integer>();
+		awayPos=new ArrayList<Integer>();
 		
 		for(int i=0;i<=25;i++)
 		{
@@ -32,6 +36,7 @@ public class Game {
 			awayPos.add(0);
 		}
 		InitializeGame(gameMode);
+		anG=new AnalyseGame(localPos,awayPos);
 	}
 	
 	public int[] getDice(){
@@ -56,7 +61,6 @@ public class Game {
 				break;
 			}
 			default: System.out.println("Pick game");
-			anG=new AnalyseGame(localPos,awayPos);	
 			
 		}
 			
@@ -171,18 +175,23 @@ public class Game {
 	}
 	
 	private void sendServerDetails(){
-		String temp;
-		temp=name1;
-		if(!name2.equals(""))
-			temp.concat(name2);
+		String temp="";
+		temp=("player,");
 		
+		temp=temp.concat(name1);
+		if(!name2.equals(""))
+			temp=temp.concat(name2);
+		else
+			temp=temp.concat(",-1");
+			
+		System.out.print("temp: "+temp+"\n");
 		conn.Send(temp);		
 	}
 	
 	public int[] receiveMsg(int  erNo){
 		int[] errorType={0,0,0};
 		String serverMsg="";
-		String[] msgAnalysed=null;
+		ArrayList<String> msgAnalysed=new ArrayList<String>();
 		
 		
 		if (erNo!=2 && erNo!=3) {
@@ -199,11 +208,14 @@ public class Game {
 		
 		
 		if(errorType[0]!=5){
+			
 			msgAnalysed=anG.analyseMsg(serverMsg);
+			System.out.println("++++msg: "+msgAnalysed.get(0)+"++++\n");
+			
 			
 			if (erNo==1) {
 				///////////////////////////
-				if (msgAnalysed.equals("move")) {
+				if (msgAnalysed.get(0).equals("move")) {
 					awayPos = new ArrayList<Integer>(anG.analyseMove(false,
 							serverMsg));
 					if (anG.NeedLocalChange()) {
@@ -214,22 +226,22 @@ public class Game {
 				///////////////////////////
 			}else if(erNo==0){
 				
-				if(msgAnalysed[0].equals("dice")){
+				if(msgAnalysed.get(0).equals("dice")){
 					//το μνμ θα είναι <dice,<1-6>,<1-6>>
-					errorType[1]=d1=Integer.valueOf(msgAnalysed[1]);
-					errorType[2]=d2=Integer.valueOf(msgAnalysed[2]);
+					errorType[1]=d1=Integer.valueOf(msgAnalysed.get(1));
+					errorType[2]=d2=Integer.valueOf(msgAnalysed.get(2));
 					errorType[0]=2;
 					
-				}else if(msgAnalysed[0].equals("playerno")){
+				}else if(msgAnalysed.get(0).equals("playerno")){
 					errorType[0]=3;
-					errorType[1]=Integer.valueOf(msgAnalysed[1]);
+					errorType[1]=Integer.valueOf(msgAnalysed.get(1));
 					if(errorType[0]==1){
 						playerNo=false;//αν errorType[0]=1 τότε ο παίκτης παίζει δεύτερος 
 					}
-				}else if(msgAnalysed[0].equals("sendname")){
+				}else if(msgAnalysed.get(0).equals("sendname")){
 					sendServerDetails();
 					errorType[0]=0;
-				}else if(msgAnalysed[0].equals("searchwait")){
+				}else if(msgAnalysed.get(0).equals("searchwait")){
 					errorType[0]=6;
 				}
 			}
@@ -244,5 +256,8 @@ public class Game {
 	
 	public void resetGame(){
 		InitializeGame(1);
+	}
+	public void closeConnection(){
+		conn.close();
 	}
 }
