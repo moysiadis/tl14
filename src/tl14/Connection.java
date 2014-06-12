@@ -13,7 +13,7 @@ public class Connection {
 	public Connection(){
 	}
 	
-	public void connectToserver() throws IOException{
+	public int connectToserver() throws IOException{
 		InetAddress serverAddr;
 		
 		try {
@@ -23,12 +23,11 @@ public class Connection {
 			in = new BufferedReader(new InputStreamReader(connectSock.getInputStream()));
 		} catch (IOException e) {
 			if(connectSock==null)
-				connectSock.close();
-			
-			throw e;
+				return -1;
 			//παραθυρο unable to connect
 			
 		}
+		return 0;
 		
 	}
 	

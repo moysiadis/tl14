@@ -161,11 +161,11 @@ public class Game {
 			conn.connectToserver();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			return 2;
+			return -1;
 		}
 		
 		
-		return 1;
+		return 0;
 		
 		
 	}
