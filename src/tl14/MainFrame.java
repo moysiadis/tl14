@@ -42,10 +42,6 @@ public class MainFrame extends JFrame{
 	int xSize,ySize;
 	public MainFrame(){
 		
-		
-        piece p1 = new piece(200,200,false);
-        piece p2 = new piece(200,100,false);
-		
         xSize=5;
         ySize=6;
         
@@ -176,29 +172,11 @@ public class MainFrame extends JFrame{
 		//frame.setEnabled(false);
         frame.setVisible(true);
 		frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
-		//puw=new PopUpWindow(0,this);
+		puw=new PopUpWindow(0,this);
 		gm=new Game(1,11234 , "localhost", "George", "", this);
 		this.drawGame();
 
-//		
-//		ImageIcon testim=new ImageIcon("icons/whiteChip.gif");
-//		JLabel c=new JLabel(testim );
-//		placeHolder[10][5].add(c);
-//		placeHolder[10][5].validate();
-//		placeHolder[10][5].repaint();
-	}
-	
-	 class add implements ActionListener{
-		 int count=25,count2=0;
-		public void actionPerformed(ActionEvent arg0) {
-			count+=10;
-			count2+=40;
-			panel.add(new piece(count,count2,true));
-			panel.validate();
-			panel.repaint();
-		}
-	}
-	
+	}	
 	
 	private void createPieces(){
 		ImageIcon image1,image2;
