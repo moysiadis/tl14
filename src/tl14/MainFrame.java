@@ -1,22 +1,29 @@
 package tl14;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.RoundRectangle2D;
 import java.util.ArrayList;
 
 import javax.swing.*;
-
 public class MainFrame extends JFrame{
 	
 	private JPanel panel;
+	private JPanel panelG;
+	private JPanel panelG1;
+	private JPanel panelG2;
+	private JPanel panelS1;
+	private JPanel panelS2;
+	
 	private JLayeredPane lPanel; 
 	private Game gm;
 	private int[] lineStack=new int[26];
 	private boolean noPlayer;
 	private ArrayList<Integer> localPos;
 	private ArrayList<Integer> awayPos;
-	private ArrayList<piece> piecesA,piecesL;
+	private ArrayList<JLabel> piecesA,piecesL;
 	private boolean playAgain=false;
 	private JFrame frame;
 	private MouseListen ml;
@@ -24,63 +31,185 @@ public class MainFrame extends JFrame{
 	JButton button1;
 	JButton button2; 
 	JLabel label1;
-	JLabel label2;
-	JLabel label3;
 	PopUpWindow puw;
 	JPanel panel2;
-	JPanel panel1;
-	
+	JPanel[][] placeHolder;
+	JPanel[][] placeHolder2;
+	JPanel[][] placeHolder3;
+	JPanel[][] placeHolder4;
+	JPanel[][] placeHolder5;
+	JPanel[][] placeHolder6;
+	int xSize,ySize;
 	public MainFrame(){
 		
 		
-       // piece p1 = new piece(200,200,false);
-		piecesA= new ArrayList<piece>();
-		piecesL= new ArrayList<piece>();
+        piece p1 = new piece(200,200,false);
+        piece p2 = new piece(200,100,false);
+		
+        xSize=5;
+        ySize=6;
+        
+        piecesA= new ArrayList<JLabel>();
+		piecesL= new ArrayList<JLabel>();		
+		
 		createPieces();
-        String path = "boardBG.png";
+        String path = "icons/boardBG.png";
 		ImageIcon image1= new  ImageIcon(path);
 		label1 = new JLabel();
         label1.setIcon(image1);
         
 		frame = new JFrame("Backgammon");
-       // frame.setPreferredSize(new Dimension(745,680));
-		frame.setLayout(new BorderLayout());
+		frame.setPreferredSize(new Dimension(745,680));
+		//frame.setLayout(new BorderLayout());
         frame.setSize(740, 690);
 		panel = new JPanel();
         panel2 = new JPanel();
+        panelG=new JPanel();
+        panelG1=new JPanel();
+        panelG2=new JPanel();
+        panelS2=new JPanel();
+        panelS1=new JPanel();
         lPanel= frame.getLayeredPane();//new JLayeredPane();//
         
-        
+        //setting boardpanel
         panel2.setSize(730, 650);
         panel2.setLayout(new BorderLayout());
         panel2.add(label1);
         panel2.setOpaque(true);
 
-        panel.setSize(730, 650);
-        panel.setLayout(getLayout());
-        //panel.add(p1);
+        //setting chippanel
+        //aristera,panw-katw/ width,height
+        panel.setBounds(33, 40, 297, 200);
+        panel.setLayout(new GridLayout(xSize, ySize));
         panel.setOpaque(false);
         
-        lPanel.add(panel2,Integer.valueOf(1));
-        lPanel.add(panel,Integer.valueOf(2));
+
+        //gia na exoume to ena panel katw apo to allo
+        panelG.setBounds(33, 410, 297, 200);
+        panelG.setLayout(new GridLayout(xSize, ySize));
+        panelG.setOpaque(false);
+        
+        
+        //gia na exoume to ena panel katw apo to allo
+        panelG1.setBounds(391, 40, 297, 200);
+        panelG1.setLayout(new GridLayout(xSize, ySize));
+        panelG1.setOpaque(false);
+        
+        //gia na exoume to ena panel katw apo to allo
+        panelG2.setBounds(391, 410, 297, 200);
+        panelG2.setLayout(new GridLayout(xSize, ySize));
+        panelG2.setOpaque(false);
+        
+        
+        panelS1.setBounds(680, 40, 50, 200);
+        panelS1.setLayout(new GridLayout(xSize, 1));
+        panelS1.setOpaque(false);
+        
+        panelS2.setBounds(680, 410, 50, 200);
+        panelS2.setLayout(new GridLayout(xSize, 1));
+        panelS2.setOpaque(false);
+        
+        
+        
+
+        //placeholders for the gridlayout
+        placeHolder=new JPanel[xSize][ySize];
+        placeHolder2=new JPanel[xSize][ySize];
+        placeHolder3=new JPanel[xSize][ySize];
+        placeHolder4=new JPanel[xSize][ySize];
+        placeHolder5=new JPanel[xSize][1];
+        placeHolder6=new JPanel[xSize][1];
+        for(int i = 0; i < xSize; i++) {
+        	for(int j = 0; j < ySize; j++) {
+        		placeHolder[i][j] = new JPanel();
+        		placeHolder[i][j].setOpaque(false);
+//        		placeHolder[i][j].add(new JLabel("!"+1));
+        		placeHolder2[i][j] = new JPanel();
+        		placeHolder2[i][j].setOpaque(false);
+//        		placeHolder2[i][j].add(new JLabel("%"+2));
+        		placeHolder3[i][j] = new JPanel();
+        		placeHolder3[i][j].setOpaque(false);
+//        		placeHolder3[i][j].add(new JLabel("$"+3));
+        		placeHolder4[i][j] = new JPanel();
+        		placeHolder4[i][j].setOpaque(false);
+//        		placeHolder4[i][j].add(new JLabel("#"+4));
+        		
+        		panel.add(placeHolder[i][j]);
+        		panelG.add(placeHolder2[i][j]);
+        		panelG1.add(placeHolder3[i][j]);
+        		panelG2.add(placeHolder4[i][j]);
+        		if (j==0) {
+					//gia thn extra sthlh otan vgainoun e3w ta poulia
+        			placeHolder5[i][0] = new JPanel();
+        			placeHolder5[i][0].setOpaque(false);
+//        			placeHolder5[i][0].add(new JLabel("@" + 5));
+        			placeHolder6[i][0] = new JPanel();
+					placeHolder6[i][0].setOpaque(false);
+//					placeHolder6[i][0].add(new JLabel("&" + 6));
+					panelS1.add(placeHolder5[i][0]);
+					panelS2.add(placeHolder6[i][0]);
+				}
+        		
+        	}
+        }
+
+        //adding panels to lPannel
+        //Positions are specified with an int 
+        //between -1 and (n - 1), where n is the number of components at the depth.
+        lPanel.add(panel2,Integer.valueOf(0));
+        lPanel.add(panel,Integer.valueOf(1),-1);
+        lPanel.add(panelG,Integer.valueOf(1),0);
+        lPanel.add(panelG1,Integer.valueOf(1),1);
+        lPanel.add(panelG2,Integer.valueOf(1),2);
+        lPanel.add(panelS1,Integer.valueOf(1),4);
+        lPanel.add(panelS2,Integer.valueOf(1),3);
+
+        
 		
         frame.setLayeredPane(lPanel);
         //frame.add(lPanel);
         ml=new MouseListen(this);
 		conDetails=new ArrayList<String>();
 		frame.addMouseListener(ml);
-
+		
+		
 		//frame.setEnabled(false);
         frame.setVisible(true);
 		frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		//puw=new PopUpWindow(0,this);
-		//gm=new Game(1,11234 , "localhost", "George", "", this);
-		//this.drawGame();
+		gm=new Game(1,11234 , "localhost", "George", "", this);
+		this.drawGame();
+
+//		
+//		ImageIcon testim=new ImageIcon("icons/whiteChip.gif");
+//		JLabel c=new JLabel(testim );
+//		placeHolder[10][5].add(c);
+//		placeHolder[10][5].validate();
+//		placeHolder[10][5].repaint();
 	}
+	
+	 class add implements ActionListener{
+		 int count=25,count2=0;
+		public void actionPerformed(ActionEvent arg0) {
+			count+=10;
+			count2+=40;
+			panel.add(new piece(count,count2,true));
+			panel.validate();
+			panel.repaint();
+		}
+	}
+	
+	
 	private void createPieces(){
+		ImageIcon image1,image2;
+		image1= new  ImageIcon("icons/whiteChip.gif");
+		image2=new ImageIcon("icons/blueChip.gif");
+		
 		for(int i=0;i<15;i++){
-			piecesA.add(new piece(0,0,false));
-			piecesL.add(new piece(0,0,true));
+			JLabel c=new JLabel(image1);
+			JLabel c2=new JLabel(image2);
+			piecesA.add(c);
+			piecesL.add(c2);
 		}
 		for(int i=0;i<26;i++){
 			lineStack[i]=0;
@@ -175,25 +304,116 @@ public class MainFrame extends JFrame{
 	private void drawGame(){//σχεδιάζει τις θέσεις των πιονιών στο τάβλι
 		awayPos=gm.getAwayPositions();
 		localPos=gm.getLocalPositions();
-		
+		int count1=14;
+		int count2=14;
+		int pos=0,rpos=4;
+//		boolean flag=false;
+	
 		for(int i=0;i<awayPos.size();i++){
 			int temp=lineStack[i]=awayPos.get(i);
+
+			rpos=5;
+
 			while(temp!=0){
-				piecesA.get(i).setPosition(i, temp);
-				temp--;
+				if((lineStack[i]-5)==temp){
+					rpos=0;
+				}
+				
+				//adding labels in the right placeholders
+				if(i==0){
+					pos=0;
+					placeHolder6[rpos][pos].add(piecesA.get(count1));
+					placeHolder6[rpos][pos].validate();
+					placeHolder6[rpos][pos].repaint();
+				}else if(i>0 && i<7){
+					pos=6-i;
+					int tpos=4-((5-rpos)%5);
+					placeHolder4[tpos][pos].add(piecesA.get(count1));
+					placeHolder4[tpos][pos].validate();
+					placeHolder4[tpos][pos].repaint();
+				}else if(i>6 && i<13){
+					pos=12-i;
+					int tpos=rpos%5;
+					placeHolder2[tpos][pos].add(piecesA.get(count1));
+					placeHolder2[tpos][pos].validate();
+					placeHolder2[tpos][pos].repaint();
+				}else if(i>12 && i<19){
+					pos=5-(18-i);
+					int tpos=(5-rpos)%5;
+					placeHolder[tpos][pos].add(piecesA.get(count1));
+					placeHolder[tpos][pos].validate();
+					placeHolder[tpos][pos].repaint();
+				}else if(i>18 && i<25){
+					pos=5-(24-i);
+					int tpos=(5-rpos)%5;
+					placeHolder3[tpos][pos].add(piecesA.get(count1));
+					placeHolder3[tpos][pos].validate();
+					placeHolder3[tpos][pos].repaint();
+				}else if(i==25){
+					pos=0;
+					placeHolder5[rpos][pos].add(piecesA.get(count1));
+					placeHolder5[rpos][pos].validate();
+					placeHolder5[rpos][pos].repaint();
+				}
+				
+				count1--;
+				temp--;	
+				rpos--;
 			}
 			temp=localPos.get(i);
+			
+			if(lineStack[i]==0)
+				lineStack[i]=temp;
+
+			rpos=5;
+
 			while(temp!=0){
-				piecesA.get(i).setPosition(i, temp);
-				temp--;
+				if((lineStack[i]-5)==temp){
+					rpos=0;
+				}
+				
+				//adding labels in the right placeholders
+				if(i==0){
+					pos=0;
+					placeHolder6[rpos][pos].add(piecesL.get(count2));
+					placeHolder6[rpos][pos].validate();
+					placeHolder6[rpos][pos].repaint();
+				}else if(i>0 && i<7){
+					pos=6-i;
+					int tpos=4-((5-rpos)%5);
+					placeHolder4[tpos][pos].add(piecesL.get(count2));
+					placeHolder4[tpos][pos].validate();
+					placeHolder4[tpos][pos].repaint();
+				}else if(i>6 && i<13){
+					pos=12-i;
+					int tpos=4-((5-rpos)%5);
+					placeHolder2[tpos][pos].add(piecesL.get(count2));
+					placeHolder2[tpos][pos].validate();
+					placeHolder2[tpos][pos].repaint();
+				}else if(i>12 && i<19){
+					pos=5-(18-i);
+					int tpos=(5-rpos)%5;
+					placeHolder[tpos][pos].add(piecesL.get(count2));
+					placeHolder[tpos][pos].validate();
+					placeHolder[tpos][pos].repaint();
+				}else if(i>18 && i<25){
+					pos=5-(24-i);
+					int tpos=(5-rpos)%5;
+					placeHolder3[tpos][pos].add(piecesL.get(count2));
+					placeHolder3[tpos][pos].validate();
+					placeHolder3[tpos][pos].repaint();
+				}else if(i==25){
+					pos=0;
+					placeHolder5[rpos][pos].add(piecesL.get(count2));
+					placeHolder5[rpos][pos].validate();
+					placeHolder5[rpos][pos].repaint();
+				}
+				
+				count2--;
+				temp--;	
+				rpos--;
 			}
 		}
-		
-		for(int i=0;i<15;i++){
-			panel.add(piecesA.get(i));
-			panel.add(piecesL.get(i));
-		}
-		//frame.repaint();
 	}
 	
 	public void userInput(int mode){
@@ -263,54 +483,5 @@ public class MainFrame extends JFrame{
 		frame.dispose();
 		return 0;
 	}
-	
-	
-	class piece extends JComponent{
-		private static final long serialVersionUID = 1L;
-		int pos1,pos2;
-		boolean team;
-		
-		
-		public piece(int pos1,int pos2,boolean team){
-			this.pos1=pos1;
-			this.pos2=pos2;
-			this.team=team;
-		}
-		
-		@Override 
-	    public Dimension getPreferredSize()
-	    {
-	        return (new Dimension(40, 40));
-	    }
-		
-		public void setPosition(int col,int lin){
-			pos1=col;
-			pos2=lin;
-			//repaint();
-		}
-		
-		public int[] getPosition(){
-			int[] temp={pos1,pos2};
-			////////////////
-			////////
-			//
-			/////////////
-			////////////
-			return temp;
-		}
-		
-		@Override
-		public void paint(Graphics g){
-			Graphics2D g2d = (Graphics2D) g;
-			
-	        if(team)
-	        	g2d.setPaint(Color.BLUE);
-	        else
-	        	g2d.setPaint(Color.WHITE);
 
-	        int[] pos=getPosition();
-	        g2d.drawOval(pos[0], pos[1], 20, 20);
-	        g2d.fillOval(pos[0], pos[1], 20, 20);
-		}
-	}
 }
