@@ -51,7 +51,7 @@ public class MainFrame extends JFrame{
 	JPanel[][] placeHolder4;
 	JPanel[][] placeHolder5;
 	JPanel[][] placeHolder6;
-	String move;
+	ArrayList<String> move;
 	int xSize,ySize;
 	public MainFrame(){
 		//////////////////////////
@@ -177,7 +177,9 @@ public class MainFrame extends JFrame{
 
 			}
 		}
-
+		
+		
+		
 		//adding panels to lPannel
 		//Positions are specified with an int 
 		//between -1 and (n - 1), where n is the number of components at the depth.
@@ -206,6 +208,11 @@ public class MainFrame extends JFrame{
 		
 	}	
 
+	
+	public Component getComp(Point p){
+		return frame.getComponentAt(p);
+	}
+	
 	private void createPieces(){
 
 
@@ -213,8 +220,8 @@ public class MainFrame extends JFrame{
 			//			JLabel c=new JLabel("");
 			//			c.setTransferHandler(new TransferHandler("new"));
 			//			
-			piecesA.add(new DragLabel(true,ml));
-			piecesL.add(new DragLabel(false,ml));
+			piecesA.add(new DragLabel(true,this));
+			piecesL.add(new DragLabel(false,this));
 		}
 		for(int i=0;i<26;i++){
 			lineStack[i]=0;
@@ -334,15 +341,20 @@ public class MainFrame extends JFrame{
 			puw=new PopUpWindow(error,this);
 
 	}
-
-	private ArrayList<String> getGraphicMove(){//περιμένει τον παίκτη να κάνει την κίνηση του
-		ArrayList<String> move=null;
+	
+	public void getMoves(){
 		ArrayList<ArrayList<Integer>> pMoves;
 		pMoves=new ArrayList<ArrayList<Integer>>(gm.PossibleMoves());
+	}
+
+	public void writeMove(int pos,int mode){//περιμένει τον παίκτη να κάνει την κίνηση του
+		
+		
+		
 
 
 
-		return move;
+		
 	}
 
 	private void setGraphicDice(int d1,int d2){

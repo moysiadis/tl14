@@ -25,6 +25,7 @@ public class DragLabel extends JLabel implements Transferable{
 	public static final DataFlavor labelFlavor = DataFlavor.imageFlavor;
 	private DragLabel dl=this;
 	private boolean ready;
+	private MainFrame mf;
 	
 	
 	protected static DataFlavor dragLabelFlavor =
@@ -35,14 +36,15 @@ public class DragLabel extends JLabel implements Transferable{
 			DataFlavor.stringFlavor,
 	};
 
-	public DragLabel(boolean team,MouseListen ml) {
+	public DragLabel(boolean team,MainFrame mf) {
 
-		this.addMouseListener(ml);
+		this.mf=mf;
 		this.setTransferHandler(new TransferHandler("icon"));
 		ImageIcon image1,image2;
 		image1= new  ImageIcon("icons/whiteChip.gif");
 		image2=new ImageIcon("icons/blueChip.gif");
 
+		
 		if(team)
 			this.setIcon(image2);
 		else
@@ -50,7 +52,7 @@ public class DragLabel extends JLabel implements Transferable{
 
 		this.dragSource = DragSource.getDefaultDragSource();
 		this.dgListener = new DGListener();
-		this.dsListener = new DSListener();
+		this.dsListener = new DSListener(mf);
 		// component, action, listener
 		this.dragSource.createDefaultDragGestureRecognizer(
 				this, DnDConstants.ACTION_MOVE, this.dgListener );
@@ -79,8 +81,12 @@ public class DragLabel extends JLabel implements Transferable{
 			throw new UnsupportedFlavorException(flavor);
 			}
 //	///////////////////////////////////////////
-	public void setReady(){
-		ready=true;
+	public void setReady(boolean t){
+		ready=t;
+	}
+	
+	public boolean getReady(){
+		return ready;
 	}
 
 	class DGListener implements DragGestureListener, Serializable{
